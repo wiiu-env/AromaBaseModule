@@ -25,7 +25,8 @@ SOURCES		:=	source \
 				source/applicationendshook \
 				source/dynload \
 				source/sdrefcount \
-				source/symbolnamepatcher
+				source/symbolnamepatcher \
+				source/patches
 DATA		:=	data
 INCLUDES	:=	source
 
