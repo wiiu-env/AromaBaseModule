@@ -6,16 +6,12 @@
 
 DECL_FUNCTION(void, __PPCExit, uint32_t u1) {
     if (gSDMountRefCount > 0) {
-        DEBUG_FUNCTION_LINE_WARN("SDCard is still mounted. Ref counter: %d\n", gSDMountRefCount);
         FSAInit();
         auto client = FSAAddClient(nullptr);
         if (client) {
-            auto res = FSAUnmount(client, "/vol/external01/", FSA_UNMOUNT_FLAG_BIND_MOUNT);
-            DEBUG_FUNCTION_LINE_WARN("Unmount res %d %s", res, FSAGetStatusStr(res));
+            FSAUnmount(client, "/vol/external01/", FSA_UNMOUNT_FLAG_BIND_MOUNT);
         }
         gSDMountRefCount = 0;
-    } else {
-        DEBUG_FUNCTION_LINE_WARN("Refcount %d", gSDMountRefCount);
     }
     real___PPCExit(u1);
 }
@@ -26,7 +22,6 @@ DECL_FUNCTION(FSStatus, FSMount, FSClient *client, FSCmdBlock *cmd, FSMountSourc
             gSDMountRefCount++;
             return FS_STATUS_OK;
         }
-        DEBUG_FUNCTION_LINE_WARN("Do real mount for /vol/external01");
         auto res = real_FSMount(client, cmd, source, target, bytes, errorMask);
         if (res == FS_STATUS_OK) {
             gSDMountRefCount++;
@@ -43,7 +38,6 @@ DECL_FUNCTION(FSStatus, FSUnmount, FSClient *client, FSCmdBlock *cmd, const char
         gSDMountRefCount--;
         if (gSDMountRefCount <= 0) {
             gSDMountRefCount = 0;
-            DEBUG_FUNCTION_LINE_WARN("Do real unmount for /vol/external01");
             return real_FSUnmount(client, cmd, target, errorMask);
         }
         return FS_STATUS_OK;
@@ -57,7 +51,6 @@ DECL_FUNCTION(FSError, FSAMount, FSAClientHandle client, const char *source, con
             gSDMountRefCount++;
             return FS_ERROR_OK;
         }
-        DEBUG_FUNCTION_LINE_WARN("Do real mount for /vol/external01");
         auto res = real_FSAMount(client, source, target, flags, arg_buf, arg_len);
         if (res == FS_ERROR_OK || res == FS_ERROR_ALREADY_EXISTS) {
             gSDMountRefCount++;
@@ -72,7 +65,6 @@ DECL_FUNCTION(FSError, FSAUnmount, FSAClientHandle client, const char *mountedTa
     if (std::string_view(mountedTarget) == "/vol/external01") {
         gSDMountRefCount--;
         if (gSDMountRefCount <= 0) {
-            DEBUG_FUNCTION_LINE_WARN("Do real unmount for /vol/external01");
             auto res         = real_FSAUnmount(client, mountedTarget, flags);
             gSDMountRefCount = 0;
             return res;
