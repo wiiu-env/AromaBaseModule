@@ -2,6 +2,7 @@
 #include "dynload/dynload.h"
 #include "globals.h"
 #include "logger.h"
+#include "patches/patches.h"
 #include "sdrefcount/refcount.h"
 #include "symbolnamepatcher/symbolname.h"
 #include <wums.h>
@@ -23,6 +24,11 @@ WUMS_INITIALIZE(args) {
     initSDRefCount();
     initSymbolNamePatcher();
     initDynload();
+    initCommonPatches();
 
     deinitLogging();
+}
+
+WUMS_APPLICATION_STARTS() {
+    commonPatchesStart();
 }
