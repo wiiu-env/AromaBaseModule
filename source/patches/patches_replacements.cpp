@@ -33,7 +33,10 @@ DECL_FUNCTION(uint32_t, FSGetClientNum) {
     if (titleID == 0x0005000010129000 || // DuckTales: Remastered USA
         titleID == 0x0005000010129200 || // DuckTales: Remastered EUR
         titleID == 0x00050000101DB200 || // Shantae: Half-Genie Hero USA
-        titleID == 0x0005000010203200    // Shantae: Half-Genie Hero EUR
+        titleID == 0x0005000010203200 || // Shantae: Half-Genie Hero EUR
+        titleID == 0x00050000101A6100 || // Shantae: Risky's Revenge Director's Cut USA
+        titleID == 0x00050000101A9600 || // Shantae: Risky's Revenge Director's Cut EUR
+        titleID == 0x00050000101F7300    // Shantae: Risky's Revenge Director's Cut JPN
     ) {
         DEBUG_FUNCTION_LINE("Fake FSGetClientNum num to %d instead of %d", gNonHomebrewFSClientCount, real_FSGetClientNum());
         return gNonHomebrewFSClientCount;
