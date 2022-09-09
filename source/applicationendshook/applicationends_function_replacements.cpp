@@ -24,13 +24,6 @@ void CallHook(wums_hook_type_t type) {
     }
 }
 
-DECL_FUNCTION(void, _Exit, uint32_t status) {
-    CallHook(WUMS_HOOK_APPLICATION_ENDS);
-    CallHook(WUMS_HOOK_FINI_WUT_SOCKETS);
-    CallHook(WUMS_HOOK_FINI_WUT_DEVOPTAB);
-    real__Exit(status);
-}
-
 DECL_FUNCTION(uint32_t, OSReceiveMessage, OSMessageQueue *queue, OSMessage *message, uint32_t flags) {
     uint32_t res = real_OSReceiveMessage(queue, message, flags);
     if (queue == OSGetSystemMessageQueue()) {
@@ -48,7 +41,6 @@ DECL_FUNCTION(uint32_t, OSReceiveMessage, OSMessageQueue *queue, OSMessage *mess
 
 function_replacement_data_t applicationendshook_function_replacements[] = {
         REPLACE_FUNCTION(OSReceiveMessage, LIBRARY_COREINIT, OSReceiveMessage),
-        REPLACE_FUNCTION(_Exit, LIBRARY_COREINIT, _Exit),
 };
 
 uint32_t applicationendshook_function_replacements_size = sizeof(applicationendshook_function_replacements) / sizeof(function_replacement_data_t);
