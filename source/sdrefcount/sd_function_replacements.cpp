@@ -1,10 +1,14 @@
 #include "sd_function_replacements.h"
+#include "applicationendshook/applicationends_function_replacements.h"
 #include "globals.h"
 #include "logger.h"
 #include <coreinit/filesystem_fsa.h>
 #include <string_view>
 
 DECL_FUNCTION(void, __PPCExit, uint32_t u1) {
+    CallHook(WUMS_HOOK_APPLICATION_ENDS);
+    CallHook(WUMS_HOOK_FINI_WUT_SOCKETS);
+    CallHook(WUMS_HOOK_FINI_WUT_DEVOPTAB);
     if (gSDMountRefCount > 0) {
         FSAInit();
         auto client = FSAAddClient(nullptr);
