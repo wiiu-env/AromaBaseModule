@@ -14,7 +14,6 @@ void initCommonPatches() {
     if (!dummy) {
         gHeapMask = 0x80000000;
     } else {
-        DEBUG_FUNCTION_LINE_ERR("%08X", dummy);
         gHeapMask = (uint32_t) dummy & 0xF0000000;
         free(dummy);
     }
