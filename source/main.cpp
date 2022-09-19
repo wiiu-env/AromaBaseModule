@@ -5,10 +5,13 @@
 #include "patches/patches.h"
 #include "sdrefcount/refcount.h"
 #include "symbolnamepatcher/symbolname.h"
+#include "version.h"
 #include <wums.h>
 
 WUMS_MODULE_EXPORT_NAME("homebrew_basemodule");
 WUMS_MODULE_SKIP_INIT_FINI();
+
+#define VERSION "v0.1.2"
 
 WUMS_INITIALIZE(args) {
     initLogging();
@@ -30,5 +33,7 @@ WUMS_INITIALIZE(args) {
 }
 
 WUMS_APPLICATION_STARTS() {
+    OSReport("Running AromaBaseModule " VERSION VERSION_EXTRA "\n");
+
     commonPatchesStart();
 }
