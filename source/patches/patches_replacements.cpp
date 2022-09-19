@@ -36,7 +36,11 @@ DECL_FUNCTION(uint32_t, FSGetClientNum) {
         titleID == 0x0005000010203200 || // Shantae: Half-Genie Hero EUR
         titleID == 0x00050000101A6100 || // Shantae: Risky's Revenge Director's Cut USA
         titleID == 0x00050000101A9600 || // Shantae: Risky's Revenge Director's Cut EUR
-        titleID == 0x00050000101F7300    // Shantae: Risky's Revenge Director's Cut JPN
+        titleID == 0x00050000101F7300 || // Shantae: Risky's Revenge Director's Cut JPN
+        titleID == 0x000500001014E100 || // Adventure Time: Explore the Dungeon Because I Don't Know! EUR
+        titleID == 0x0005000010144000 || // Adventure Time: Explore the Dungeon Because I Don't Know! USA
+        titleID == 0x0005000010115D00 || // The Smurfs™ 2 EUR
+        titleID == 0x0005000010113300    // The Smurfs™ 2 USA
     ) {
         DEBUG_FUNCTION_LINE("Fake FSGetClientNum num to %d instead of %d", gNonHomebrewFSClientCount, real_FSGetClientNum());
         return gNonHomebrewFSClientCount;
