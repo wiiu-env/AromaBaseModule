@@ -10,7 +10,7 @@ DECL_FUNCTION(OSDynLoad_Error, OSDynLoad_Acquire, char const *name, OSDynLoad_Mo
     DEBUG_FUNCTION_LINE_VERBOSE("Looking for module %s", name);
     for (uint32_t i = 0; i < gModuleData->number_modules; i++) {
         if (strcmp(name, gModuleData->modules[i].module_export_name) == 0) {
-            *outModule = (OSDynLoad_Module) (0x13370000 + i);
+            *outModule = (OSDynLoad_Module) (MODULE_MAGIC | i);
             return OS_DYNLOAD_OK;
         }
     }
@@ -29,8 +29,8 @@ DECL_FUNCTION(OSDynLoad_Error, OSDynLoad_FindExport, OSDynLoad_Module module, BO
         return OS_DYNLOAD_OK;
     }
 
-    if (((uint32_t) module & 0xFFFF0000) == 0x13370000) {
-        uint32_t moduleHandle = ((uint32_t) module) & 0x0000FFFF;
+    if (((uint32_t) module & MODULE_MAGIC_MASK) == MODULE_MAGIC) {
+        uint32_t moduleHandle = ((uint32_t) module) & MODULE_ID_MASK;
         if (moduleHandle >= gModuleData->number_modules) {
             DEBUG_FUNCTION_LINE_ERR("Invalid module handle was encoded in OSDynLoad_Module %d (%08X)", moduleHandle, module);
             return result;
@@ -67,9 +67,9 @@ DECL_FUNCTION(LOADED_RPL *, LiFindRPLByName, char *name) {
             gRPLData[i].fileInfoBuffer    = &fileInfoBuffer; // will be copied to the LiImportTracking array
             gRPLData[i].loadStateFlags    = 0x0;
             gRPLData[i].entrypoint        = 0x1; //needs to be != 0;
-            gRPLData[i].funcExports       = (Export *) (FUNCTION_EXPORT_MASK + i);
+            gRPLData[i].funcExports       = (Export *) (FUNCTION_EXPORT_MAGIC + i);
             gRPLData[i].numFuncExports    = 1;
-            gRPLData[i].dataExports       = (Export *) (DATA_EXPORT_MASK + i);
+            gRPLData[i].dataExports       = (Export *) (DATA_EXPORT_MAGIC + i);
             gRPLData[i].numDataExports    = 1;
             return &gRPLData[i];
         }
@@ -90,10 +90,10 @@ DECL_FUNCTION(uint32_t, __OSDynLoad_InternalAcquire, char *name, void *out, uint
 Export ourExportThing;
 
 DECL_FUNCTION(Export *, LiBinSearchExport, Export *exports, int numExports, char *name) {
-    auto isFunc = (((uint32_t) exports) & 0xFFFF0000) == FUNCTION_EXPORT_MASK;
-    auto isData = (((uint32_t) exports) & 0xFFFF0000) == DATA_EXPORT_MASK;
+    auto isFunc = (((uint32_t) exports) & EXPORT_MASK) == FUNCTION_EXPORT_MAGIC;
+    auto isData = (((uint32_t) exports) & EXPORT_MASK) == DATA_EXPORT_MAGIC;
     if (isFunc || isData) {
-        uint32_t moduleHandle = ((uint32_t) exports) & 0x0000FFFF;
+        uint32_t moduleHandle = ((uint32_t) exports) & EXPORT_MAGIC_MASK;
         if (moduleHandle > gModuleData->number_modules) {
             DEBUG_FUNCTION_LINE_LOADER_ERR("Invalid module handle was encoded in Export %d (%08X)", moduleHandle, exports);
             return nullptr;
