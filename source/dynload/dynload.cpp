@@ -10,6 +10,11 @@ void initDynload() {
         DEBUG_FUNCTION_LINE_ERR("Failed to allocate gLoadedRPLData");
         OSFatal("AromaBaseModule: Failed to allocate gLoadedRPLData");
     }
+    gRPLData = (RPL_DATA *) malloc(sizeof(RPL_DATA) * gModuleData->number_modules);
+    if (!gRPLData) {
+        DEBUG_FUNCTION_LINE_ERR("Failed to allocate gRPLData");
+        OSFatal("AromaBaseModule: Failed to allocate gRPLData");
+    }
 
     DEBUG_FUNCTION_LINE("Patch functions for dynload patches");
     for (uint32_t i = 0; i < dynload_function_replacements_size; i++) {

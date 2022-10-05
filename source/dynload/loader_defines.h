@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <wut.h>
 
 // see https://github.com/decaf-emu/decaf-emu/tree/43366a34e7b55ab9d19b2444aeb0ccd46ac77dea/src/libdecaf/src/cafe/loader
 struct LiImportTracking {
@@ -34,6 +35,14 @@ struct LOADED_RPL {
     Export *dataExports;
     char u4[12];
 };
+
+// https://github.com/decaf-emu/decaf-emu/blob/6feb1be1db3938e6da2d4a65fc0a7a8599fc8dd6/src/libdecaf/src/cafe/libraries/coreinit/coreinit_dynload.cpp#L40
+struct RPL_DATA {
+    uint32_t handle;
+    WUT_UNKNOWN_BYTES(0x94 - 0x4);
+};
+WUT_CHECK_SIZE(RPL_DATA, 0x94);
+
 
 #define EXPORT_MASK           0xFFFF0000
 #define EXPORT_MAGIC_MASK     0x0000FFFF
