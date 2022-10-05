@@ -5,10 +5,10 @@
 #include <malloc.h>
 
 void initDynload() {
-    gRPLData = (LOADED_RPL *) malloc(sizeof(LOADED_RPL) * gModuleData->number_modules);
-    if (!gRPLData) {
-        DEBUG_FUNCTION_LINE_ERR("Failed to allocate gRPLData");
-        OSFatal("AromaBaseModule: Failed to allocate gRPLData");
+    gLoadedRPLData = (LOADED_RPL *) malloc(sizeof(LOADED_RPL) * gModuleData->number_modules);
+    if (!gLoadedRPLData) {
+        DEBUG_FUNCTION_LINE_ERR("Failed to allocate gLoadedRPLData");
+        OSFatal("AromaBaseModule: Failed to allocate gLoadedRPLData");
     }
 
     DEBUG_FUNCTION_LINE("Patch functions for dynload patches");

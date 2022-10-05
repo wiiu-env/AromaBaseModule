@@ -63,15 +63,15 @@ DECL_FUNCTION(LOADED_RPL *, LiFindRPLByName, char *name) {
     for (uint32_t i = 0; i < gModuleData->number_modules; i++) {
         auto *curModule = &gModuleData->modules[i];
         if (strcmp(name, curModule->module_export_name) == 0) {
-            fileInfoBuffer.tlsModuleIndex = 0;
-            gRPLData[i].fileInfoBuffer    = &fileInfoBuffer; // will be copied to the LiImportTracking array
-            gRPLData[i].loadStateFlags    = 0x0;
-            gRPLData[i].entrypoint        = 0x1; //needs to be != 0;
-            gRPLData[i].funcExports       = (Export *) (FUNCTION_EXPORT_MAGIC + i);
-            gRPLData[i].numFuncExports    = 1;
-            gRPLData[i].dataExports       = (Export *) (DATA_EXPORT_MAGIC + i);
-            gRPLData[i].numDataExports    = 1;
-            return &gRPLData[i];
+            fileInfoBuffer.tlsModuleIndex    = 0;
+            gLoadedRPLData[i].fileInfoBuffer = &fileInfoBuffer; // will be copied to the LiImportTracking array
+            gLoadedRPLData[i].loadStateFlags = 0x0;
+            gLoadedRPLData[i].entrypoint     = 0x1; //needs to be != 0;
+            gLoadedRPLData[i].funcExports    = (Export *) (FUNCTION_EXPORT_MAGIC + i);
+            gLoadedRPLData[i].numFuncExports = 1;
+            gLoadedRPLData[i].dataExports    = (Export *) (DATA_EXPORT_MAGIC + i);
+            gLoadedRPLData[i].numDataExports = 1;
+            return &gLoadedRPLData[i];
         }
     }
     return real_LiFindRPLByName(name);
@@ -118,7 +118,7 @@ DECL_FUNCTION(Export *, LiBinSearchExport, Export *exports, int numExports, char
 
 DECL_FUNCTION(int32_t, LiFixupRelocOneRPL, LOADED_RPL *rpl, void *imports, uint32_t unknown) {
     auto rplAddress = (uint32_t) rpl;
-    if (rplAddress >= (uint32_t) &gRPLData[0] && rplAddress < (uint32_t) &gRPLData[gModuleData->number_modules]) {
+    if (rplAddress >= (uint32_t) &gLoadedRPLData[0] && rplAddress < (uint32_t) &gLoadedRPLData[gModuleData->number_modules]) {
         // Skip if this is our fake RPL
         return 0;
     }
@@ -127,7 +127,7 @@ DECL_FUNCTION(int32_t, LiFixupRelocOneRPL, LOADED_RPL *rpl, void *imports, uint3
 
 DECL_FUNCTION(int32_t, sCheckOne, LOADED_RPL *rpl) {
     auto rplAddress = (uint32_t) rpl;
-    if (rplAddress >= (uint32_t) &gRPLData[0] && rplAddress < (uint32_t) &gRPLData[gModuleData->number_modules]) {
+    if (rplAddress >= (uint32_t) &gLoadedRPLData[0] && rplAddress < (uint32_t) &gLoadedRPLData[gModuleData->number_modules]) {
         // Skip if this is our fake RPL
         return 0;
     }
