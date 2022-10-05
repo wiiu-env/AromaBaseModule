@@ -2,6 +2,7 @@
 #include "applicationendshook/applicationends_function_replacements.h"
 #include "globals.h"
 #include "logger.h"
+#include <coreinit/dynload.h>
 #include <coreinit/filesystem_fsa.h>
 #include <string_view>
 
@@ -16,6 +17,14 @@ DECL_FUNCTION(void, __PPCExit, uint32_t u1) {
             FSAUnmount(client, "/vol/external01/", FSA_UNMOUNT_FLAG_BIND_MOUNT);
         }
         gSDMountRefCount = 0;
+    }
+
+    if (gModuleData->number_acquired_rpls > 0) {
+        DEBUG_FUNCTION_LINE_VERBOSE("Release RPLs acquired by modules");
+        for (uint32_t i = 0; i < gModuleData->number_acquired_rpls; i++) {
+            DEBUG_FUNCTION_LINE_VERBOSE("OSDynLoad_Release(0x%08)", gModuleData->acquired_rpls[i]);
+            OSDynLoad_Release((void *) gModuleData->acquired_rpls[i]);
+        }
     }
     real___PPCExit(u1);
 }
