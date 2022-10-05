@@ -6,6 +6,18 @@
 #include <cstring>
 #include <wums.h>
 
+DECL_FUNCTION(void, OSDynLoad_Release, OSDynLoad_Module module) {
+    if (((uint32_t) module & MODULE_MAGIC_MASK) == MODULE_MAGIC) {
+        uint32_t moduleHandle = ((uint32_t) module) & MODULE_ID_MASK;
+        if (moduleHandle >= gModuleData->number_modules) {
+            DEBUG_FUNCTION_LINE_WARN("Invalid module handle was encoded in OSDynLoad_Module %d (%08X)", moduleHandle, module);
+        } else {
+            return;
+        }
+    }
+    real_OSDynLoad_Release(module);
+}
+
 DECL_FUNCTION(OSDynLoad_Error, OSDynLoad_Acquire, char const *name, OSDynLoad_Module *outModule) {
     DEBUG_FUNCTION_LINE_VERBOSE("Looking for module %s", name);
     for (uint32_t i = 0; i < gModuleData->number_modules; i++) {
@@ -146,6 +158,7 @@ function_replacement_data_t dynload_function_replacements[] = {
         REPLACE_FUNCTION_VIA_ADDRESS(LiFixupRelocOneRPL, 0x320059f0, 0x010059f0),
         REPLACE_FUNCTION(OSDynLoad_Acquire, LIBRARY_COREINIT, OSDynLoad_Acquire),
         REPLACE_FUNCTION(OSDynLoad_FindExport, LIBRARY_COREINIT, OSDynLoad_FindExport),
+        REPLACE_FUNCTION(OSDynLoad_Release, LIBRARY_COREINIT, OSDynLoad_Release),
 };
 
 uint32_t dynload_function_replacements_size = sizeof(dynload_function_replacements) / sizeof(function_replacement_data_t);
