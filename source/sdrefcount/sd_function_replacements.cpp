@@ -22,7 +22,7 @@ DECL_FUNCTION(void, __PPCExit, uint32_t u1) {
     if (gModuleData->number_acquired_rpls > 0) {
         DEBUG_FUNCTION_LINE_VERBOSE("Release RPLs acquired by modules");
         for (uint32_t i = 0; i < gModuleData->number_acquired_rpls; i++) {
-            DEBUG_FUNCTION_LINE_VERBOSE("OSDynLoad_Release(0x%08)", gModuleData->acquired_rpls[i]);
+            DEBUG_FUNCTION_LINE_VERBOSE("OSDynLoad_Release(0x%08X)", gModuleData->acquired_rpls[i]);
             OSDynLoad_Release((void *) gModuleData->acquired_rpls[i]);
         }
     }
