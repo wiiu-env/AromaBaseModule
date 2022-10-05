@@ -77,10 +77,14 @@ DECL_FUNCTION(LOADED_RPL *, LiFindRPLByName, char *name) {
     return real_LiFindRPLByName(name);
 }
 
-DECL_FUNCTION(uint32_t, __OSDynLoad_InternalAcquire, char *name, void *out, uint32_t u1, uint32_t u2, uint32_t u3) {
+DECL_FUNCTION(uint32_t, __OSDynLoad_InternalAcquire, char *name, RPL_DATA **out, uint32_t u1, uint32_t u2, uint32_t u3) {
     for (uint32_t i = 0; i < gModuleData->number_modules; i++) {
         auto *curModule = &gModuleData->modules[i];
         if (strcmp(name, curModule->module_export_name) == 0) {
+            // OSDynLoad_IsModuleLoaded uses __OSDynLoad_InternalAcquire and expects out have a valid value.
+            // It uses the "handle", so don't need to fill the whole struct.
+            gRPLData[i].handle = MODULE_MAGIC | i;
+            *out               = &gRPLData[i];
             return 0;
         }
     }

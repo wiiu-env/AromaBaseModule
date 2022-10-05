@@ -4,3 +4,4 @@
 extern module_information_t *gModuleData;
 extern int32_t gSDMountRefCount;
 extern LOADED_RPL *gLoadedRPLData;
+extern RPL_DATA *gRPLData;
