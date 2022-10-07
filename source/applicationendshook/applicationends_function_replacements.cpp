@@ -30,7 +30,7 @@ void ZombiUFix() {
      * ZombiU doesn't exit properly. It just calls exit(0) after receiving the
      * request to exit. If exiting takes too long, other threads will run again
      * and crash for some reason. The (hacky) solution is to set the priority
-     * of (some) ZombiU threads to something very high.
+     * of (some) ZombiU threads to something very high (=> low priority).
      */
     if (OSGetTitleID() == 0x000500001010EF00 || // ZombiU EUR
         OSGetTitleID() == 0x000500001011A700 || // ZombiU EUR

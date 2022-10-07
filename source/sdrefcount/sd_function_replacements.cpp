@@ -4,9 +4,31 @@
 #include "logger.h"
 #include <coreinit/dynload.h>
 #include <coreinit/filesystem_fsa.h>
+#include <coreinit/interrupts.h>
+#include <coreinit/scheduler.h>
 #include <string_view>
 
+void NWF_Fix() {
+    // Some games using the NWF (like Dot Arcade) keep a thread called "PlatformInputAppStateListenerThread" running,
+    // which will cause a DSI exception if the title is not closing fast enough.
+    auto *curThread = OSGetCurrentThread();
+    __OSLockScheduler(curThread);
+    int state   = OSDisableInterrupts();
+    OSThread *t = *((OSThread **) 0x100567F8);
+    while (t) {
+        if (std::string_view(t->name) == "PlatformInputAppStateListenerThread") {
+            t->priority = 0x80;
+            OSReport("Set priority to %d for thread %08X (%s) to prevent it from running/crashing\n", t->priority, t, t->name);
+        }
+        t = t->activeLink.next;
+    }
+    OSRestoreInterrupts(state);
+    __OSUnlockScheduler(curThread);
+}
+
 DECL_FUNCTION(void, __PPCExit, uint32_t u1) {
+    NWF_Fix();
+
     CallHook(WUMS_HOOK_APPLICATION_ENDS);
     CallHook(WUMS_HOOK_FINI_WUT_SOCKETS);
     CallHook(WUMS_HOOK_FINI_WUT_DEVOPTAB);
