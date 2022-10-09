@@ -11,7 +11,7 @@
 WUMS_MODULE_EXPORT_NAME("homebrew_basemodule");
 WUMS_MODULE_SKIP_INIT_FINI();
 
-#define VERSION "v0.1.3"
+#define VERSION "v0.2.0"
 
 WUMS_INITIALIZE(args) {
     initLogging();
