@@ -4,6 +4,8 @@
 #include "logger.h"
 #include <malloc.h>
 
+extern "C" FunctionPatcherStatus FPAddFunctionPatch(function_replacement_data_t *function_data, PatchedFunctionHandle *outHandle, bool *outHasBeenPatched);
+
 void initDynload() {
     gLoadedRPLData = (LOADED_RPL *) malloc(sizeof(LOADED_RPL) * gModuleData->number_modules);
     if (!gLoadedRPLData) {
@@ -18,7 +20,9 @@ void initDynload() {
 
     DEBUG_FUNCTION_LINE("Patch functions for dynload patches");
     for (uint32_t i = 0; i < dynload_function_replacements_size; i++) {
-        if (!FunctionPatcherPatchFunction(&dynload_function_replacements[i], nullptr)) {
+        bool wasPatched = false;
+        // We need to use FPAddFunctionPatch because we can't use libfunctionpatcher yet. This patch enables it though.
+        if (FPAddFunctionPatch(&dynload_function_replacements[i], nullptr, &wasPatched) != FUNCTION_PATCHER_RESULT_SUCCESS || !wasPatched) {
             OSFatal("AromaBaseModule: Failed to patch function for dynload patches");
         }
     }

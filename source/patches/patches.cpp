@@ -21,7 +21,8 @@ void initCommonPatches() {
 
     DEBUG_FUNCTION_LINE("Do common patches");
     for (uint32_t i = 0; i < patches_function_replacements_size; i++) {
-        if (!FunctionPatcherPatchFunction(&patches_function_replacements[i], nullptr)) {
+        bool wasPatched = false;
+        if (FunctionPatcher_AddFunctionPatch(&patches_function_replacements[i], nullptr, &wasPatched) != FUNCTION_PATCHER_RESULT_SUCCESS || !wasPatched) {
             OSFatal("AromaBaseModule: Failed apply common patches");
         }
     }
