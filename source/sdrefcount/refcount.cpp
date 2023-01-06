@@ -21,7 +21,8 @@ void initSDRefCount() {
 
     DEBUG_FUNCTION_LINE("Patch SDRefCount functions");
     for (uint32_t i = 0; i < sdrefcount_function_replacements_size; i++) {
-        if (!FunctionPatcherPatchFunction(&sdrefcount_function_replacements[i], nullptr)) {
+        bool wasPatched = false;
+        if (FunctionPatcher_AddFunctionPatch(&sdrefcount_function_replacements[i], nullptr, &wasPatched) != FUNCTION_PATCHER_RESULT_SUCCESS || !wasPatched) {
             OSFatal("AromaBaseModule: Failed to patch function for sd ref counting");
         }
     }
