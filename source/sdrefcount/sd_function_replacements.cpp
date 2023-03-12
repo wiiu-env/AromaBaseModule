@@ -286,7 +286,7 @@ void NWF_Fix() {
     int state   = OSDisableInterrupts();
     OSThread *t = *((OSThread **) 0x100567F8);
     while (t) {
-        if (std::string_view(t->name) == "PlatformInputAppStateListenerThread") {
+        if (t->name != nullptr && std::string_view(t->name) == "PlatformInputAppStateListenerThread") {
             t->priority = 0x80;
             OSReport("Set priority to %d for thread \"%s\" (%08X) to prevent it from running/crashing\n", t->priority, t->name, t);
         }
