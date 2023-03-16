@@ -3,6 +3,7 @@
 #include "loader_defines.h"
 #include "logger.h"
 #include <coreinit/dynload.h>
+#include <cstdio>
 #include <cstring>
 #include <wums.h>
 
@@ -27,10 +28,20 @@ DECL_FUNCTION(OSDynLoad_Error, OSDynLoad_Acquire, char const *name, OSDynLoad_Mo
         }
     }
 
-    OSDynLoad_Error result = real_OSDynLoad_Acquire(name, outModule);
-    if (result == OS_DYNLOAD_OK) {
-        return OS_DYNLOAD_OK;
+    if (name != nullptr && name[0] == '~') {
+        char cpy[64] = {};
+        snprintf(cpy, sizeof(cpy), "%s", name);
+        char *curPtr = &cpy[1];
+        while (*curPtr != '\0') {
+            if (*curPtr == '/') {
+                *curPtr = '|';
+            }
+            curPtr++;
+        }
+        return real_OSDynLoad_Acquire(cpy, outModule);
     }
+
+    OSDynLoad_Error result = real_OSDynLoad_Acquire(name, outModule);
 
     return result;
 }
