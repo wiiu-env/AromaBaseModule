@@ -42,7 +42,7 @@ DECL_FUNCTION(uint32_t, FSGetClientNum) {
         titleID == 0x0005000010115D00 || // The Smurfs™ 2 EUR
         titleID == 0x0005000010113300    // The Smurfs™ 2 USA
     ) {
-        DEBUG_FUNCTION_LINE("Fake FSGetClientNum num to %d instead of %d", gNonHomebrewFSClientCount, real_FSGetClientNum());
+        DEBUG_FUNCTION_LINE_INFO("Fake FSGetClientNum num to %d instead of %d", gNonHomebrewFSClientCount, real_FSGetClientNum());
         return gNonHomebrewFSClientCount;
     }
     return real_FSGetClientNum();
