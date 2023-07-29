@@ -5,10 +5,17 @@
 #include <coreinit/filesystem_fsa.h>
 #include <coreinit/title.h>
 
+static inline bool IsInHardcodedHomebrewMemoryRegion(void *addr) {
+    if ((uint32_t) addr >= 0x00800000 && (uint32_t) addr < 0x01000000) {
+        return true;
+    }
+    return false;
+}
+
 DECL_FUNCTION(FSStatus, FSAddClient, FSClient *client, FSErrorFlag errorMask) {
     auto res = real_FSAddClient(client, errorMask);
     if (res == FS_STATUS_OK) {
-        if (((uint32_t) client & 0xF0000000) != gHeapMask) {
+        if (((uint32_t) client & 0xF0000000) != gHeapMask && !IsInHardcodedHomebrewMemoryRegion(client)) {
             gNonHomebrewFSClientCount++;
         }
     }
@@ -18,7 +25,7 @@ DECL_FUNCTION(FSStatus, FSAddClient, FSClient *client, FSErrorFlag errorMask) {
 DECL_FUNCTION(FSStatus, FSDelClient, FSClient *client, FSErrorFlag errorMask) {
     auto res = real_FSDelClient(client, errorMask);
     if (res == FS_STATUS_OK) {
-        if (((uint32_t) client & 0xF0000000) != gHeapMask) {
+        if (((uint32_t) client & 0xF0000000) != gHeapMask && !IsInHardcodedHomebrewMemoryRegion(client)) {
             gNonHomebrewFSClientCount--;
         }
     }
