@@ -3,6 +3,7 @@
 #include "loader_defines.h"
 #include "logger.h"
 #include <coreinit/dynload.h>
+#include <coreinit/title.h>
 #include <cstdio>
 #include <cstring>
 #include <wums.h>
@@ -161,8 +162,21 @@ DECL_FUNCTION(int32_t, sCheckOne, LOADED_RPL *rpl) {
     return real_sCheckOne(rpl);
 }
 
+DECL_FUNCTION(void, sACPLoadOnDone, void) {
+    if (OSGetTitleID() == 0x0005000010140900L) { // オセロ (Othello)
+        DEBUG_FUNCTION_LINE_INFO("Skip sACPLoadOnDone for オセロ (Othello) as it might slow down exiting.");
+        // For some unknown reason unloading the nn_acp.rpl after playing Othello
+        // takes 30-100 seconds when many plugins are loaded... We take the very hacky and lazy route
+        // and just stop calling it and pray this won't break anything.
+        return;
+    }
+
+    return real_sACPLoadOnDone();
+}
+
 function_replacement_data_t dynload_function_replacements[] = {
-        REPLACE_FUNCTION_VIA_ADDRESS(__OSDynLoad_InternalAcquire, 0x32029054, 0x101C400 + 0x0cc54),
+        REPLACE_FUNCTION_VIA_ADDRESS(sACPLoadOnDone, 0x3201C400 + 0x29de0, 0x101C400 + 0x29de0),
+        REPLACE_FUNCTION_VIA_ADDRESS(__OSDynLoad_InternalAcquire, 0x3201C400 + 0x0cc54, 0x101C400 + 0x0cc54),
         REPLACE_FUNCTION_VIA_ADDRESS(LiFindRPLByName, 0x32004BC4, 0x01004bc4),
         REPLACE_FUNCTION_VIA_ADDRESS(LiBinSearchExport, 0x320002f8, 0x010002f8),
         REPLACE_FUNCTION_VIA_ADDRESS(sCheckOne, 0x32007294, 0x01007294),
