@@ -4,6 +4,7 @@
 #include "patches.h"
 #include <coreinit/filesystem_fsa.h>
 #include <coreinit/title.h>
+#include <sysapp/launch.h>
 
 static inline bool IsInHardcodedHomebrewMemoryRegion(void *addr) {
     if ((uint32_t) addr >= 0x00800000 && (uint32_t) addr < 0x01000000) {
@@ -54,10 +55,26 @@ DECL_FUNCTION(uint32_t, FSGetClientNum) {
     }
     return real_FSGetClientNum();
 }
+
+DECL_FUNCTION(uint32_t, SYSReturnToCaller, void *args) {
+    // Fix jumping back to the System Settings when exiting the System Transfer
+    auto curTitleID = OSGetTitleID();
+    if (curTitleID == 0x0005001010062000L || curTitleID == 0x0005001010062100L || curTitleID == 0x0005001010062200L) {
+        SysAppSettingsArgs set_args{};
+        // Jump directly to the Transfer Menu
+        set_args.jumpTo = 0xFF;
+        _SYSLaunchSettings(&set_args);
+        return 0;
+    }
+
+    return real_SYSReturnToCaller(args);
+}
+
 function_replacement_data_t patches_function_replacements[] = {
         REPLACE_FUNCTION(FSAddClient, LIBRARY_COREINIT, FSAddClient),
         REPLACE_FUNCTION(FSDelClient, LIBRARY_COREINIT, FSDelClient),
         REPLACE_FUNCTION(FSGetClientNum, LIBRARY_COREINIT, FSGetClientNum),
+        REPLACE_FUNCTION(SYSReturnToCaller, LIBRARY_SYSAPP, SYSReturnToCaller),
 };
 
 uint32_t patches_function_replacements_size = sizeof(patches_function_replacements) / sizeof(function_replacement_data_t);
