@@ -62,7 +62,7 @@ DECL_FUNCTION(uint32_t, SYSReturnToCaller, void *args) {
     if (curTitleID == 0x0005001010062000L || curTitleID == 0x0005001010062100L || curTitleID == 0x0005001010062200L) {
         SysAppSettingsArgs set_args{};
         // Jump directly to the Transfer Menu
-        set_args.jumpTo = 0xFF;
+        set_args.jumpTo = SYS_SETTINGS_JUMP_TO_SOFTWARE_TRANSFER;
         _SYSLaunchSettings(&set_args);
         return 0;
     }
