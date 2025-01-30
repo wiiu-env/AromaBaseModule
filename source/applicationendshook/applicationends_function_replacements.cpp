@@ -62,6 +62,7 @@ DECL_FUNCTION(uint32_t, OSReceiveMessage, OSMessageQueue *queue, OSMessage *mess
                 if (message->args[0] == 0xD1E0D1E0) {
                     ZombiUFix();
                     CallHook(WUMS_HOOK_APPLICATION_REQUESTS_EXIT);
+                    CallHook(WUMS_HOOK_ALL_APPLICATION_REQUESTS_EXIT_DONE);
                 }
             }
             lastData0 = message->args[0];

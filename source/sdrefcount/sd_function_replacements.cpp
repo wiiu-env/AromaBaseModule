@@ -300,6 +300,7 @@ DECL_FUNCTION(void, __PPCExit, uint32_t u1) {
     NWF_Fix();
 
     CallHook(WUMS_HOOK_APPLICATION_ENDS);
+    CallHook(WUMS_HOOK_ALL_APPLICATION_ENDS_DONE);
     CallHook(WUMS_HOOK_FINI_WUT_SOCKETS);
     CallHook(WUMS_HOOK_FINI_WUT_DEVOPTAB);
     if (gSDMountRefCount > 0) {
