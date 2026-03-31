@@ -12,7 +12,7 @@ DECL_FUNCTION(void, OSDynLoad_Release, OSDynLoad_Module module) {
     if (((uint32_t) module & MODULE_MAGIC_MASK) == MODULE_MAGIC) {
         uint32_t moduleHandle = ((uint32_t) module) & MODULE_ID_MASK;
         if (moduleHandle >= gModuleData->number_modules) {
-            DEBUG_FUNCTION_LINE_WARN("Invalid module handle was encoded in OSDynLoad_Module %d (%08X)", moduleHandle, module);
+            DEBUG_FUNCTION_LINE_WARN("Invalid module handle was encoded in OSDynLoad_Module %d (%p)", moduleHandle, module);
         } else {
             return;
         }
@@ -56,7 +56,7 @@ DECL_FUNCTION(OSDynLoad_Error, OSDynLoad_FindExport, OSDynLoad_Module module, BO
     if (((uint32_t) module & MODULE_MAGIC_MASK) == MODULE_MAGIC) {
         uint32_t moduleHandle = ((uint32_t) module) & MODULE_ID_MASK;
         if (moduleHandle >= gModuleData->number_modules) {
-            DEBUG_FUNCTION_LINE_ERR("Invalid module handle was encoded in OSDynLoad_Module %d (%08X)", moduleHandle, module);
+            DEBUG_FUNCTION_LINE_ERR("Invalid module handle was encoded in OSDynLoad_Module %d (%p)", moduleHandle, module);
             return result;
         }
 
