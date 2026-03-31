@@ -44,7 +44,7 @@ void ZombiUFix() {
         while (t) {
             if ((uint32_t) t > (uint32_t) curThread && (uint32_t) t < 0x20000000) {
                 t->priority = 0x80;
-                OSReport("Set priority to %d for thread %08X (%s) to prevent it from running/crashing\n", t->priority, t, t->name);
+                OSReport("Set priority to %d for thread %p (%s) to prevent it from running/crashing\n", t->priority, t, t->name);
             }
             t = t->activeLink.next;
         }

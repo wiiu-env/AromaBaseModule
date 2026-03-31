@@ -288,7 +288,7 @@ void NWF_Fix() {
     while (t) {
         if (t->name != nullptr && std::string_view(t->name) == "PlatformInputAppStateListenerThread") {
             t->priority = 0x80;
-            OSReport("Set priority to %d for thread \"%s\" (%08X) to prevent it from running/crashing\n", t->priority, t->name, t);
+            OSReport("Set priority to %d for thread \"%s\" (%p) to prevent it from running/crashing\n", t->priority, t->name, t);
         }
         t = t->activeLink.next;
     }

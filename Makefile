@@ -33,7 +33,7 @@ INCLUDES	:=	source
 #-------------------------------------------------------------------------------
 # options for code generation
 #-------------------------------------------------------------------------------
-CFLAGS	:=	-Wall -Wextra -O3 -ffunction-sections\
+CFLAGS	:=	-Wall -Wextra -Werror -O3 -ffunction-sections\
 			$(MACHDEP)
 
 CFLAGS	+=	$(INCLUDE) -D__WIIU__ -D__WUT__
